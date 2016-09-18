@@ -1,11 +1,8 @@
 package com.daprlabs.aaron.swipedeck2;
 
-import com.daprlabs.aaron.swipedeck.SwipeDeck;
-import com.squareup.picasso.Picasso;
-
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,44 +13,50 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daprlabs.aaron.swipedeck.SwipeDeck;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by erol on 14.09.2016.
+ */
+public class MainFragment extends Fragment {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainFragment";
     private SwipeDeck cardStack;
-    private Context context = this;
+    private Context context = getContext();
     private SwipeDeckAdapter adapter;
     private ArrayList<String> testData;
     private CheckBox dragCheckbox;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        cardStack = (SwipeDeck) findViewById(R.id.swipe_deck);
-        dragCheckbox = (CheckBox) findViewById(R.id.checkbox_drag);
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v =inflater.inflate(R.layout.fragment_main, container, false);
+        cardStack = (SwipeDeck) v.findViewById(R.id.swipe_deck);
+        dragCheckbox = (CheckBox) v.findViewById(R.id.checkbox_drag);
         testData = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             testData.add(String.valueOf(i));
         }
 
-        adapter = new SwipeDeckAdapter(testData, this);
+        adapter = new SwipeDeckAdapter(testData, getContext());
         if(cardStack != null){
             cardStack.setAdapter(adapter);
         }
+
         cardStack.setCallback(new SwipeDeck.SwipeDeckCallback() {
             @Override
-            public void cardSwipedLeft(long stableId) {
-                Log.i("MainActivity", "card was swiped left, position in adapter: " + stableId);
+            public void cardSwipedLeft(long itemId) {
+                Log.i("MainActivity", "card was swiped left, position in adapter: " + itemId);
+
             }
 
             @Override
-            public void cardSwipedRight(long stableId) {
-                Log.i("MainActivity", "card was swiped right, position in adapter: " + stableId);
-
+            public void cardSwipedRight(long itemId) {
+                Log.i("MainActivity", "card was swiped right, position in adapter: " + itemId);
             }
 
             @Override
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         cardStack.setLeftImage(R.id.left_image);
         cardStack.setRightImage(R.id.right_image);
 
-        Button btn = (Button) findViewById(R.id.button_left);
+        Button btn = (Button) v.findViewById(R.id.button_left);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        Button btn2 = (Button) findViewById(R.id.button_right);
+        Button btn2 = (Button) v.findViewById(R.id.button_right);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn3 = (Button) findViewById(R.id.button_center);
-        assert btn3 != null;
+        Button btn3 = (Button) v.findViewById(R.id.button_center);
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        return v;
+
     }
+
 
     public class SwipeDeckAdapter extends BaseAdapter {
 
@@ -124,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
             View v = convertView;
             if (v == null) {
-                LayoutInflater inflater = getLayoutInflater();
+                LayoutInflater inflater = getActivity().getLayoutInflater();
                 // normally use a viewholder
                 v = inflater.inflate(R.layout.test_card2, parent, false);
             }
@@ -147,4 +153,5 @@ public class MainActivity extends AppCompatActivity {
             return v;
         }
     }
+
 }
